@@ -1,0 +1,6 @@
+# Never push passwords or editor/OS files
+config/db.php
+.vscode/
+Thumbs.db
+.DS_Store
+*.log
