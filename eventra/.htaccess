@@ -1,0 +1,6 @@
+Options -Indexes
+DirectoryIndex index.php
+
+# block direct web access to internal folders
+RedirectMatch 403 ^/includes/
+RedirectMatch 403 ^/database/

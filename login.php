@@ -1,105 +1,64 @@
 <?php
-require_once __DIR__ . '/includes/functions.php';
+require __DIR__ . '/includes/bootstrap.php';
+if (current_user()) redirect('home.php');
 
-if (current_user($pdo)) {
-    redirect('index.php');
-}
-
-$error = '';
+$role  = ($_POST['role'] ?? $_GET['role'] ?? 'student') === 'faculty' ? 'faculty' : 'student';
+$error = null;
 $email = '';
-$role  = 'student';
-$success = isset($_GET['registered']) ? 'Account created! Please sign in.' : '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email    = strtolower(trim($_POST['email'] ?? ''));
-    $password = $_POST['password'] ?? '';
-    $role     = (($_POST['role'] ?? '') === 'faculty') ? 'faculty' : 'student';
-
-    if (!csrf_ok()) {
-        $error = 'Session expired. Please try again.';
-    } elseif ($email === '' || $password === '') {
-        $error = 'Please enter your email and password.';
-    } elseif (empty($_POST['terms'])) {
-        $error = 'Please accept the Terms and Conditions.';
-    } else {
-        $st = $pdo->prepare('SELECT * FROM users WHERE email = ?');
-        $st->execute([$email]);
-        $found = $st->fetch();
-
-        if (!$found || !password_verify($password, $found['password_hash'])) {
+if (is_post()) {
+    csrf_check();
+    $email = trim($_POST['email'] ?? '');
+    $pass  = $_POST['password'] ?? '';
+    if ($email === '' || $pass === '')       $error = 'Please enter your email and password.';
+    elseif (empty($_POST['terms']))          $error = 'Please accept the Terms and Conditions.';
+    else {
+        $u = q_one('SELECT * FROM users WHERE email = ?', [$email]);
+        if (!$u || !password_verify($pass, $u['password_hash'])) {
             $error = 'Incorrect email or password.';
-        } elseif ($found['role'] !== $role) {
-            $error = 'This is not a ' . ucfirst($role) . ' account. Choose the correct tab.';
+        } elseif ($u['role'] !== $role) {
+            $error = 'This account is a ' . $u['role'] . ' account. Please switch the toggle to ' . ucfirst($u['role']) . '.';
         } else {
             session_regenerate_id(true);
-            $_SESSION['user_id'] = $found['id'];
-            redirect($found['role'] === 'student' ? 'dashboard.php' : 'faculty.php');
+            $_SESSION['uid'] = (int)$u['id'];
+            redirect('home.php');
         }
     }
 }
+
+$page_title = 'Sign In';
+require __DIR__ . '/includes/auth_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In | Eventra</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-<div class="auth">
-  <?php include __DIR__ . '/includes/auth_left.php'; ?>
+<h2 id="welcome">Welcome <?= $role === 'faculty' ? 'Faculty' : 'Student' ?>!</h2>
+<p class="sub">Sign in to continue to Eventra</p>
 
-  <section class="auth-right">
-    <div class="auth-box">
-      <h1 id="welcome">Welcome <?= e(ucfirst($role)) ?>!</h1>
-      <p class="sub">Sign in to continue to Eventra</p>
+<?php if ($error): ?><div class="alert err"><?= e($error) ?></div><?php endif; ?>
 
-      <?php if ($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
-      <?php if ($success): ?><div class="alert alert-ok"><?= e($success) ?></div><?php endif; ?>
+<form method="post" novalidate>
+  <?= csrf_field() ?>
+  <div class="seg">
+    <label><input type="radio" name="role" value="student" data-heading="Welcome Student!" <?= $role === 'student' ? 'checked' : '' ?>><span>Student</span></label>
+    <label><input type="radio" name="role" value="faculty" data-heading="Welcome Faculty!" <?= $role === 'faculty' ? 'checked' : '' ?>><span>Faculty</span></label>
+  </div>
 
-      <form method="post" action="login.php" novalidate>
-        <?= csrf_field() ?>
+  <label class="lbl" for="email">Email</label>
+  <input class="input" type="email" id="email" name="email" placeholder="Enter your email" value="<?= e($email) ?>" required>
+  <label class="lbl" for="password">Password</label>
+  <input class="input" type="password" id="password" name="password" placeholder="Enter your password" required>
+  <a class="forgot" href="<?= e(url('forgot-password.php')) ?>">Forgot Password?</a>
 
-        <div class="toggle">
-          <input type="radio" name="role" id="r-student" value="student" <?= $role === 'student' ? 'checked' : '' ?>>
-          <label for="r-student">Student</label>
-          <input type="radio" name="role" id="r-faculty" value="faculty" <?= $role === 'faculty' ? 'checked' : '' ?>>
-          <label for="r-faculty">Faculty</label>
-        </div>
+  <label class="check"><input type="checkbox" name="terms" id="terms" value="1" <?= !empty($_POST['terms']) ? 'checked' : '' ?>>
+    <span>I accept the <a data-open="m-terms">Terms and Conditions</a></span></label>
 
-        <div class="field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" value="<?= e($email) ?>">
-        </div>
-        <div class="field">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Create a password">
-        </div>
+  <button class="btn btn-primary btn-lg" type="submit">Sign In</button>
+</form>
 
-        <div class="forgot"><a href="#">Forgot Password?</a></div>
-
-        <label class="check">
-          <input type="checkbox" name="terms" value="1">
-          <span>I accept the <a href="terms.php" target="_blank">Terms and Conditions</a></span>
-        </label>
-
-        <button type="submit" class="btn btn-primary btn-lg btn-block">Sign In</button>
-      </form>
-
-      <p class="or">or continue with</p>
-      <div class="social">
-        <button type="button" class="btn btn-outline" onclick="alert('Google sign-in will be added in a later sprint.')">Google</button>
-        <button type="button" class="btn btn-outline" onclick="alert('Facebook sign-in will be added in a later sprint.')">Facebook</button>
-      </div>
-
-      <p class="switch">Don't have an account? <a href="register.php">Sign up</a></p>
-    </div>
-  </section>
+<p class="or">or continue with</p>
+<div class="social">
+  <a class="btn btn-outline" href="<?= e(url('coming-soon.php')) ?>">Google</a>
+  <a class="btn btn-outline" href="<?= e(url('coming-soon.php')) ?>">Facebook</a>
 </div>
-<script src="assets/js/app.js"></script>
-</body>
-</html>
+<p class="switch-line">Don't have an account? <a href="<?= e(url('signup.php')) ?>">Sign up</a></p>
+
+<?php require __DIR__ . '/includes/terms_modal.php'; ?>
+<?php require __DIR__ . '/includes/auth_footer.php'; ?>

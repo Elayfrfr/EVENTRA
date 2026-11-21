@@ -1,13 +1,5 @@
-# Eventra (student side)
+# Eventra
+Campus event management & ticketing (students and faculty). PHP 8 + MySQL, no framework.
+See **GUIDE.md** for setup, Git and InfinityFree deployment.
 
-PHP + MySQL web app. Local: Laragon. Hosting: InfinityFree.
-
-## Run locally
-1. Put this folder in `C:\laragon\www\eventra`
-2. Start Laragon (Start All)
-3. phpMyAdmin: create database `eventra`, then import `database/eventra.sql`
-4. Copy `config/db.example.php` to `config/db.php` (Laragon defaults already work)
-5. Open http://localhost/eventra
-
-## Pages
-login.php, register.php, dashboard.php, events.php, register_event.php, tickets.php, profile.php, terms.php, logout.php
+Quick start: import `database/schema.sql` then `database/seed.sql`, copy `includes/config.sample.php` to `includes/config.local.php`, open the site. Demo password: `Eventra@Demo2026`.

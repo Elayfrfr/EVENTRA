@@ -1,6 +1,13 @@
-# Never push passwords or editor/OS files
-config/db.php
+# secrets & local settings
+includes/config.local.php
+
+# user uploads (keep the folder)
+uploads/avatars/*
+!uploads/avatars/.gitkeep
+
+# editor / OS
 .vscode/
-Thumbs.db
+.idea/
 .DS_Store
+Thumbs.db
 *.log

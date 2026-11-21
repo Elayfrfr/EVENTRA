@@ -5,7 +5,7 @@
 $host = 'localhost';   // Laragon: localhost | InfinityFree: e.g. sql123.infinityfree.com
 $db   = 'eventra';     // Laragon: eventra   | InfinityFree: e.g. if0_12345678_eventra
 $user = 'root';        // Laragon: root      | InfinityFree: e.g. if0_12345678
-$pass = '';            // Laragon: (empty)   | InfinityFree: your hosting account password
+$pass = 'ptngnamopareh67!';            // Laragon: (empty)   | InfinityFree: your hosting account password
 
 try {
     $pdo = new PDO(
