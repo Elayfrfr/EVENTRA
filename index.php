@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/includes/bootstrap.php';
-if (current_user()) redirect('home.php');
+if (current_user()) redirect('dashboard/home.php');
 ?>
 <!DOCTYPE html>
 <html lang="en"><head>

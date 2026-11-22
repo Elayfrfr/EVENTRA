@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/includes/bootstrap.php';
-if (current_user()) redirect('home.php');
+if (current_user()) redirect('dashboard/home.php');
 ?>
 <!DOCTYPE html>
 <html lang="en"><head>
@@ -14,12 +14,12 @@ if (current_user()) redirect('home.php');
   <div class="landing-card">
     <div class="logo"><span class="logo-mark">E</span><span>Eventra</span></div>
     <p class="tagline">EVENT MANAGEMENT &amp; TICKETING</p>
-    <a class="btn btn-primary" href="<?= e(url('signup.php')) ?>">Get Started</a>
-    <a class="btn btn-outline" href="<?= e(url('login.php')) ?>">Sign In</a>
+    <a class="btn btn-primary" href="<?= e(url('auth/signup.php')) ?>">Get Started</a>
+    <a class="btn btn-outline" href="<?= e(url('auth/login.php')) ?>">Sign In</a>
     <p class="or" style="margin-top:24px">or continue with</p>
     <div class="social">
-      <a class="btn btn-outline" style="margin:0;height:44px" href="<?= e(url('coming-soon.php')) ?>">Google</a>
-      <a class="btn btn-outline" style="margin:0;height:44px" href="<?= e(url('coming-soon.php')) ?>">Facebook</a>
+      <a class="btn btn-outline" style="margin:0;height:44px" href="<?= e(url('auth/coming-soon.php')) ?>">Google</a>
+      <a class="btn btn-outline" style="margin:0;height:44px" href="<?= e(url('auth/coming-soon.php')) ?>">Facebook</a>
     </div>
   </div>
 </div>

@@ -73,7 +73,7 @@ function require_login(): array
 function require_role(string $role): array
 {
     $u = require_login();
-    if ($u['role'] !== $role) redirect('home.php');
+    if ($u['role'] !== $role) redirect('dashboard/home.php');
     return $u;
 }
 function is_faculty(?array $u): bool { return $u && $u['role'] === 'faculty'; }
@@ -186,13 +186,13 @@ function event_card(array $ev, ?array $user, ?array $reg = null): string
     $h .= '<p class="meta">' . e(fmt_when($ev)) . '</p>';
     if (is_faculty($user)) {
         $h .= '<p class="meta">' . e($ev['venue']) . ' · ' . (int)$ev['reg_count'] . ' registered' . ($ev['status'] === 'draft' ? ' · Draft' : '') . '</p>';
-        $h .= '<a class="btn btn-primary btn-block" href="' . e(url('event-edit.php?id=' . $ev['id'])) . '">Edit</a>';
+        $h .= '<a class="btn btn-primary btn-block" href="' . e(url('faculty/event-edit.php?id=' . $ev['id'])) . '">Edit</a>';
     } else {
         $h .= '<p class="meta">' . e($ev['venue']) . '</p>';
         if ($reg) {
-            $h .= '<a class="btn btn-outline btn-block" href="' . e(url('tickets.php?t=' . $reg['id'])) . '">View Ticket</a>';
+            $h .= '<a class="btn btn-outline btn-block" href="' . e(url('tickets/tickets.php?t=' . $reg['id'])) . '">View Ticket</a>';
         } else {
-            $h .= '<a class="btn btn-primary btn-block" href="' . e(url('register-event.php?id=' . $ev['id'])) . '">Register</a>';
+            $h .= '<a class="btn btn-primary btn-block" href="' . e(url('events/register-event.php?id=' . $ev['id'])) . '">Register</a>';
         }
     }
     return $h . '</div>';

@@ -7,7 +7,7 @@ Demo password for ALL seeded accounts: `Eventra@Demo2026`
 
 ## PART 1 – Run it locally (Laragon + VS Code)
 1. Install Laragon Full from laragon.org (default options). Open it and click **Start All** (Apache + MySQL turn green).
-2. Unzip the project so the folder is `C:\laragon\www\eventra` (index.php must sit directly inside it).
+2. Unzip the project so the folder is `C:\laragon\www\eventra` (index.php must sit directly inside it; see the folder map in README.md).
 3. In Laragon: right-click → **Quick app**/or just restart; Auto Virtual Hosts gives you `http://eventra.test`. (Fallback: `http://localhost/eventra`; then set `BASE_URL` to `/eventra` in config.local.php.)
 4. Create the database: Laragon → **Database** button (HeidiSQL) → connect (user `root`, empty password) → right-click → Create new → Database → name `eventra`, collation `utf8mb4_unicode_ci`.
 5. Import: select `eventra` → File → Run SQL file → `database/schema.sql`, then `database/seed.sql`.
